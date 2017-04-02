@@ -2,6 +2,9 @@ var yo = require('yo-yo');
 var diffhtml = require('diffhtml');
 var d3 = require('d3');
 
+var store = require('../../commons/store');
+var lineActions = require('../../reducers/lines/actions');
+
 module.exports = function() {
   require('./index.css');
 
@@ -22,7 +25,12 @@ module.exports = function() {
     .attr('width', window.innerWidth)
     .attr('height', window.innerHeight);
 
-  var linesData = [];
+  store.subscribe(function() {
+    console.log(store.getState());
+    drawLines(lineActions.selectLines(store.getState()));
+  });
+
+  addAndDrawRandomLine();
 
   setTimeout(function() {
     addAndDrawRandomLine();
@@ -37,15 +45,12 @@ module.exports = function() {
   }, 3000);
 
   ///////////////////////////////////////////////////////////
-  function addAndDrawRandomLine() {
-    linesData = [
-      ...linesData,
-      {
-        p1: [Math.random()*400+200, Math.random()*400+200],
-        p2: [Math.random()*400+200, Math.random()*400+200]
-      }
-    ]
-    drawLines(linesData);
+  function addAndDrawRandomLine(linesData) {
+    var randomLine = {
+      p1: [Math.random()*400+200, Math.random()*400+200],
+      p2: [Math.random()*400+200, Math.random()*400+200]
+    };
+    store.dispatch(lineActions.addLine(randomLine));
   }
 
   function drawLines(data) {
