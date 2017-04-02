@@ -3,7 +3,7 @@ var diffhtml = require('diffhtml');
 var d3 = require('d3');
 
 var store = require('../../commons/store');
-var lineActions = require('../../reducers/lines/actions');
+var linesActions = require('../../reducers/lines/actions');
 
 module.exports = function() {
   require('./index.css');
@@ -25,34 +25,39 @@ module.exports = function() {
     .attr('width', window.innerWidth)
     .attr('height', window.innerHeight);
 
+  // update on store changes
   store.subscribe(function() {
-    // console.log(store.getState());
-    drawLines(lineActions.selectLines(store.getState()));
+    drawLines(linesActions.selectLines(store.getState()));
   });
 
   addAndDrawRandomLine();
 
-  // setTimeout(function() {
-  //   addAndDrawRandomLine();
-  // }, 1000);
-
-  // setTimeout(function() {
-  //   addAndDrawRandomLine();
-  // }, 2000);
-
-  // setTimeout(function() {
-  //   addAndDrawRandomLine();
-  // }, 3000);
-
-  d3DrawArea.on('click', addAndDrawRandomLine);
+  d3DrawArea
+    .call(d3.drag()
+      .on("start", dragStart)
+      .on("drag", dragging)
+      .on("end", dragStop)
+    );
 
   ///////////////////////////////////////////////////////////
+  function dragStart() {
+    console.log('start line:', d3.mouse(this));
+  }
+
+  function dragging() {
+    console.log('drag line:', d3.mouse(this));
+  }
+
+  function dragStop() {
+    console.log('stop line:', d3.mouse(this));
+  }
+
   function addAndDrawRandomLine(linesData) {
     var randomLine = {
       p1: [Math.random()*400+200, Math.random()*400+200],
       p2: [Math.random()*400+200, Math.random()*400+200]
     };
-    store.dispatch(lineActions.addLine(randomLine));
+    store.dispatch(linesActions.addLine(randomLine));
   }
 
   function drawLines(data) {
@@ -76,4 +81,4 @@ module.exports = function() {
       .attr('x2', d => d.p2[0])
       .attr('y2', d => d.p2[1]);
   }
-}
+};

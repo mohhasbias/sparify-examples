@@ -8,7 +8,7 @@ function addLine(line) {
 }
 
 function selectLines(rootState) {
-  return rootState;
+  return rootState.lines;
 }
 
 module.exports = {
