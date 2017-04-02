@@ -44,7 +44,7 @@ module.exports = function() {
 ```
 this file contains function that could be called to render home page.
 
-7. Modify ```app.js``` to declare path to ```/home``` and call function to render ```home```. clear the content of ```app.js```, replace it with this code
+7. Modify ```app.js``` to call function to render ```home```. clear the content of ```app.js```, replace it with this code
 ```javascript
 var homePage = require('./pages/home');
 
