@@ -26,23 +26,25 @@ module.exports = function() {
     .attr('height', window.innerHeight);
 
   store.subscribe(function() {
-    console.log(store.getState());
+    // console.log(store.getState());
     drawLines(lineActions.selectLines(store.getState()));
   });
 
   addAndDrawRandomLine();
 
-  setTimeout(function() {
-    addAndDrawRandomLine();
-  }, 1000);
+  // setTimeout(function() {
+  //   addAndDrawRandomLine();
+  // }, 1000);
 
-  setTimeout(function() {
-    addAndDrawRandomLine();
-  }, 2000);
+  // setTimeout(function() {
+  //   addAndDrawRandomLine();
+  // }, 2000);
 
-  setTimeout(function() {
-    addAndDrawRandomLine();
-  }, 3000);
+  // setTimeout(function() {
+  //   addAndDrawRandomLine();
+  // }, 3000);
+
+  d3DrawArea.on('click', addAndDrawRandomLine);
 
   ///////////////////////////////////////////////////////////
   function addAndDrawRandomLine(linesData) {
