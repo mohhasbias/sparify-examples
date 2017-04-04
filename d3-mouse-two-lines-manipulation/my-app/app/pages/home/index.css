@@ -1,0 +1,8 @@
+#d3-draw-area {
+  background-color: #e3e3e3;
+}
+
+#d3-draw-area .line {
+  stroke: black;
+  stroke-width: 2;
+}
