@@ -31,6 +31,7 @@ module.exports = function() {
     drawLines(linesActions.selectLines(store.getState()));
     // console.log(linesActions.selectLines(store.getState()));
     // drawLine(lineActions.selectLine(store.getState()));
+    // checkP
   });
 
   addAndDrawRandomLine();
@@ -48,20 +49,20 @@ module.exports = function() {
   //   );
 
   ///////////////////////////////////////////////////////////
-  function dragStart() {
-    store.dispatch(lineActions.startLine(d3.mouse(this)));
-  }
+  // function dragStart() {
+  //   store.dispatch(lineActions.startLine(d3.mouse(this)));
+  // }
 
-  function dragging() {
-    store.dispatch(lineActions.dragLineEnd(d3.mouse(this)));
-  }
+  // function dragging() {
+  //   store.dispatch(lineActions.dragLineEnd(d3.mouse(this)));
+  // }
 
-  function dragStop() {
-    store.dispatch(lineActions.stopLine(d3.mouse(this)));
-    var newLine = lineActions.selectLine(store.getState());
-    store.dispatch(linesActions.addLine(newLine));
-    store.dispatch(lineActions.clearLine());
-  }
+  // function dragStop() {
+  //   store.dispatch(lineActions.stopLine(d3.mouse(this)));
+  //   var newLine = lineActions.selectLine(store.getState());
+  //   store.dispatch(linesActions.addLine(newLine));
+  //   store.dispatch(lineActions.clearLine());
+  // }
 
   function addAndDrawRandomLine(linesData) {
     var randomLine = {
@@ -85,6 +86,7 @@ module.exports = function() {
       .append('line')
       .attr('class', 'line')
       .style('stroke', `rgba(${Math.floor(Math.random()*128)}, ${Math.floor(Math.random()*128)}, ${Math.floor(Math.random()*128)}, 0.75)`)
+      .style('stroke-width', 3)
       .merge(update.select('line.line'))
       .attr('x1', d => d.p1[0])
       .attr('y1', d => d.p1[1])
@@ -97,18 +99,22 @@ module.exports = function() {
       .style('stroke', 'rgba(255, 0, 0, 0.5)')
       .style('opacity', 0)
       .style('stroke-width', 10)
+      .style('cursor', 'move')
       .merge(update.select('line.hit-area'))
       .attr('x1', d => d.p1[0])
       .attr('y1', d => d.p1[1])
       .attr('x2', d => d.p2[0])
       .attr('y2', d => d.p2[1])
+      .call(d3.drag()
+        .on('start', setAnchor)
+        .on('drag', moveLine));
       // .call(onMouseOverLine);
 
     group
       .append('circle')
       .attr('class', 'hit-area line-start')
       .style('fill', 'rgba(0, 255, 0, 0.5)')
-      // .style('opacity', 0)
+      .style('opacity', 0)
       .style('cursor', 'pointer')
       .merge(update.select('circle.hit-area.line-start'))
       .attr('cx', d => d.p1[0])
@@ -122,7 +128,7 @@ module.exports = function() {
       .append('circle')
       .attr('class', 'hit-area line-end')
       .style('fill', 'rgba(0, 0, 255, 0.5)')
-      // .style('opacity', 0)
+      .style('opacity', 0)
       .style('cursor', 'pointer')
       .merge(update.select('circle.hit-area.line-end'))
       .attr('cx', d => d.p2[0])
@@ -153,6 +159,14 @@ module.exports = function() {
     function dragLineEnd(d) {
       // store.dispatch(lineActions.dragLineEnd(d3.mouse(this)));
       store.dispatch(linesActions.dragLineEnd(d.id, d3.mouse(this)));
+    }
+
+    function setAnchor(d) {
+      store.dispatch(linesActions.setAnchor(d.id, d3.mouse(this)));
+    }
+
+    function moveLine(d) {
+      store.dispatch(linesActions.moveLine(d.id, d3.mouse(this)));
     }
   }
 
