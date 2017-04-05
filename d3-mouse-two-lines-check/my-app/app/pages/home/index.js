@@ -29,41 +29,14 @@ module.exports = function() {
   // do some updates on store changes
   store.subscribe(function() {
     drawLines(linesActions.selectLines(store.getState()));
-    // console.log(linesActions.selectLines(store.getState()));
-    // drawLine(lineActions.selectLine(store.getState()));
-    // checkP
   });
 
   addAndDrawRandomLine();
   addAndDrawRandomLine();
 
-  // line drawing for preview
-  // store.dispatch(lineActions.startLine([100, 100]));
-  // store.dispatch(lineActions.stopLine([250, 300]));
+  // featureDrawLine(d3DrawArea, store);
 
-  // d3DrawArea
-  //   .call(d3.drag()
-  //     .on("start", dragStart)
-  //     .on("drag", dragging)
-  //     .on("end", dragStop)
-  //   );
-
-  ///////////////////////////////////////////////////////////
-  // function dragStart() {
-  //   store.dispatch(lineActions.startLine(d3.mouse(this)));
-  // }
-
-  // function dragging() {
-  //   store.dispatch(lineActions.dragLineEnd(d3.mouse(this)));
-  // }
-
-  // function dragStop() {
-  //   store.dispatch(lineActions.stopLine(d3.mouse(this)));
-  //   var newLine = lineActions.selectLine(store.getState());
-  //   store.dispatch(linesActions.addLine(newLine));
-  //   store.dispatch(lineActions.clearLine());
-  // }
-
+  /////////////////////////
   function addAndDrawRandomLine(linesData) {
     var randomLine = {
       p1: [Math.random()*400+200, Math.random()*400+200],
@@ -108,7 +81,6 @@ module.exports = function() {
       .call(d3.drag()
         .on('start', setAnchor)
         .on('drag', moveLine));
-      // .call(onMouseOverLine);
 
     group
       .append('circle')
@@ -120,7 +92,6 @@ module.exports = function() {
       .attr('cx', d => d.p1[0])
       .attr('cy', d => d.p1[1])
       .attr('r', 10)
-      // .call(onMouseOverStartPoint)
       .call(d3.drag()
         .on('drag', dragLineStart));
 
@@ -134,23 +105,10 @@ module.exports = function() {
       .attr('cx', d => d.p2[0])
       .attr('cy', d => d.p2[1])
       .attr('r', 10)
-      // .call(onMouseOverStartPoint)
       .call(d3.drag()
         .on('drag', dragLineEnd));
 
-    /////////////////////
-    // function onMouseOverLine(selection, d) {
-    //   selection.on('mouseover', function() {
-    //     console.log('mouseover line');
-    //   });
-    // }
-
-    // function onMouseOverStartPoint(selection, d) {
-    //   selection.on('mouseover', function() {
-    //     console.log('mouseover start point');
-    //   });
-    // }
-
+    ////////////////////////////////
     function dragLineStart(d) {
       // store.dispatch(lineActions.dragLineStart(d3.mouse(this)));
       store.dispatch(linesActions.dragLineStart(d.id, d3.mouse(this)));
@@ -170,88 +128,98 @@ module.exports = function() {
     }
   }
 
-  function drawLine(data) {
-    data = data? [data] : [];
+  function featureDrawLine(drawArea, store) {
+    // do some updates on store changes
+    store.subscribe(function() {
+      drawLine(lineActions.selectLine(store.getState()));
+    });
 
-    var update = d3DrawArea.selectAll('g.line-preview')
-      .data(data);
-
-    update.exit().remove();
-
-    var group = update.enter()
-      .append('g')
-      .attr('class', 'line-preview');
-
-    group
-      .append('line')
-      .attr('class', 'line')
-      .style('stroke', 'black')
-      .merge(update.select('line.line'))
-      .attr('x1', d => d.p1[0])
-      .attr('y1', d => d.p1[1])
-      .attr('x2', d => d.p2[0])
-      .attr('y2', d => d.p2[1]);
-
-    group
-      .append('line')
-      .attr('class', 'hit-area')
-      .style('stroke', 'rgba(255, 0, 0, 0.5)')
-      .style('opacity', 0)
-      .style('stroke-width', 10)
-      .merge(update.select('line.hit-area'))
-      .attr('x1', d => d.p1[0])
-      .attr('y1', d => d.p1[1])
-      .attr('x2', d => d.p2[0])
-      .attr('y2', d => d.p2[1])
-      .call(onMouseOverLine);
-
-    group
-      .append('circle')
-      .attr('class', 'hit-area line-start')
-      .style('fill', 'rgba(0, 255, 0, 0.5)')
-      // .style('opacity', 0)
-      .style('cursor', 'pointer')
-      .merge(update.select('circle.hit-area.line-start'))
-      .attr('cx', d => d.p1[0])
-      .attr('cy', d => d.p1[1])
-      .attr('r', 10)
-      .call(onMouseOverStartPoint)
+    drawArea
       .call(d3.drag()
-        .on('drag', dragLineStart));
+        .on('start', startLine)
+        .on('drag', dragLine)
+        .on('end', stopLine)
+      );
 
-    group
-      .append('circle')
-      .attr('class', 'hit-area line-end')
-      .style('fill', 'rgba(0, 0, 255, 0.5)')
-      // .style('opacity', 0)
-      .style('cursor', 'pointer')
-      .merge(update.select('circle.hit-area.line-end'))
-      .attr('cx', d => d.p2[0])
-      .attr('cy', d => d.p2[1])
-      .attr('r', 10)
-      .call(onMouseOverStartPoint)
-      .call(d3.drag()
-        .on('drag', dragLineEnd));
-
-    /////////////////////
-    function onMouseOverLine(selection, d) {
-      selection.on('mouseover', function() {
-        console.log('mouseover line');
-      });
+    //////////////////
+    function startLine() {
+      store.dispatch(lineActions.startLine(d3.mouse(this)));
     }
 
-    function onMouseOverStartPoint(selection, d) {
-      selection.on('mouseover', function() {
-        console.log('mouseover start point');
-      });
-    }
-
-    function dragLineStart() {
-      store.dispatch(lineActions.dragLineStart(d3.mouse(this)));
-    }
-
-    function dragLineEnd() {
+    function dragLine() {
       store.dispatch(lineActions.dragLineEnd(d3.mouse(this)));
+    }
+
+    function stopLine() {
+      store.dispatch(lineActions.stopLine(d3.mouse(this)));
+    }
+
+    function drawLine(data) {
+      data = data? [data] : [];
+
+      var update = drawArea.selectAll('g.line-preview')
+        .data(data);
+
+      update.exit().remove();
+
+      var group = update.enter()
+        .append('g')
+        .attr('class', 'line-preview');
+
+      group
+        .append('line')
+        .attr('class', 'line')
+        .style('stroke', 'black')
+        .merge(update.select('line.line'))
+        .attr('x1', d => d.p1[0])
+        .attr('y1', d => d.p1[1])
+        .attr('x2', d => d.p2[0])
+        .attr('y2', d => d.p2[1]);
+
+      group
+        .append('line')
+        .attr('class', 'hit-area')
+        .style('stroke', 'rgba(255, 0, 0, 0.5)')
+        .style('opacity', 0)
+        .style('stroke-width', 10)
+        .merge(update.select('line.hit-area'))
+        .attr('x1', d => d.p1[0])
+        .attr('y1', d => d.p1[1])
+        .attr('x2', d => d.p2[0])
+        .attr('y2', d => d.p2[1]);
+
+      group
+        .append('circle')
+        .attr('class', 'hit-area line-start')
+        .style('fill', 'rgba(0, 255, 0, 0.5)')
+        .style('cursor', 'pointer')
+        .merge(update.select('circle.hit-area.line-start'))
+        .attr('cx', d => d.p1[0])
+        .attr('cy', d => d.p1[1])
+        .attr('r', 10)
+        .call(d3.drag()
+          .on('drag', dragLineStart));
+
+      group
+        .append('circle')
+        .attr('class', 'hit-area line-end')
+        .style('fill', 'rgba(0, 0, 255, 0.5)')
+        .style('cursor', 'pointer')
+        .merge(update.select('circle.hit-area.line-end'))
+        .attr('cx', d => d.p2[0])
+        .attr('cy', d => d.p2[1])
+        .attr('r', 10)
+        .call(d3.drag()
+          .on('drag', dragLineEnd));
+
+      /////////////////////
+      function dragLineStart() {
+        store.dispatch(lineActions.dragLineStart(d3.mouse(this)));
+      }
+
+      function dragLineEnd() {
+        store.dispatch(lineActions.dragLineEnd(d3.mouse(this)));
+      }
     }
   }
 };

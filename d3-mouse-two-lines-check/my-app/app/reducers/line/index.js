@@ -10,7 +10,7 @@ module.exports = function(state = initialState, action) {
       return {
         p1: action.payload,
         p2: action.payload,
-        m: calculateSlope(action.payload.p1, action.payload.p2)
+        m: calculateSlope(action.payload, action.payload)
       };
     case actions.DRAG_LINE_START:
       return Object.assign({}, state, {
