@@ -5,6 +5,7 @@ var d3 = require('d3');
 var store = require('../../commons/store');
 var linesActions = require('../../reducers/lines/actions');
 var lineActions = require('../../reducers/line/actions');
+var perpendicularActions = require('../../reducers/perpendicular/actions');
 
 module.exports = function() {
   require('./index.css');
@@ -28,16 +29,21 @@ module.exports = function() {
 
   // do some updates on store changes
   store.subscribe(function() {
-    drawLines(linesActions.selectLines(store.getState()));
+    drawLines(d3DrawArea, linesActions.selectLines(store.getState()));
   });
 
-  addAndDrawRandomLine();
-  addAndDrawRandomLine();
+  addRandomLine();
+  addRandomLine();
+
+  // calculate perpendicular
+  store.subscribe(function() {
+    drawPerpendicular(d3DrawArea, perpendicularActions.selectIsPerpendicular(store.getState()));
+  });
 
   // featureDrawLine(d3DrawArea, store);
 
   /////////////////////////
-  function addAndDrawRandomLine(linesData) {
+  function addRandomLine(linesData) {
     var randomLine = {
       p1: [Math.random()*400+200, Math.random()*400+200],
       p2: [Math.random()*400+200, Math.random()*400+200]
@@ -45,8 +51,8 @@ module.exports = function() {
     store.dispatch(linesActions.addLine(randomLine));
   }
 
-  function drawLines(data) {
-    var update = d3DrawArea.selectAll('g.lines')
+  function drawLines(drawArea, data) {
+    var update = drawArea.selectAll('g.lines')
       .data(data);
 
     update.exit().remove();
@@ -126,6 +132,21 @@ module.exports = function() {
     function moveLine(d) {
       store.dispatch(linesActions.moveLine(d.id, d3.mouse(this)));
     }
+  }
+
+  function drawPerpendicular(drawArea, data) {
+    var update = drawArea.selectAll('g.perpendicular')
+      .data([data]);
+    
+    update.exit().remove();
+
+    var group = update.enter()
+      .append('g')
+      .attr('class', 'perpendicular');
+
+    group
+      .append('text')
+      .attr('text', 'Hoho');
   }
 
   function featureDrawLine(drawArea, store) {

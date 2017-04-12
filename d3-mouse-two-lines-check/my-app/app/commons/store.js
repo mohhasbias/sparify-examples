@@ -3,6 +3,7 @@ var redux = require('redux');
 var reducers = redux.combineReducers({
   lines: require('../reducers/lines'),
   // line: require('../reducers/line')
+  perpendicular: require('../reducers/perpendicular')
 });
 
 var store = redux.createStore(
