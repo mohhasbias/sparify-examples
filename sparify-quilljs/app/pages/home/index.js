@@ -16,6 +16,7 @@ module.exports = function() {
 
         <!-- But you can also add your own -->
         <button id="custom-button">${he.decode('&#9742;')}</button>
+        <button class="ql-image"></button>
       </div>
       <div id="editor"></div>
     </div>
@@ -28,7 +29,7 @@ module.exports = function() {
 
   var quill = new Quill('#editor', {
     modules: {
-      toolbar: true
+      toolbar: '#toolbar'
     },
     theme: 'snow'
   });
@@ -36,5 +37,11 @@ module.exports = function() {
   var customButton = document.querySelector('#custom-button');
   customButton.addEventListener('click', function() {
     console.log('Clicked!');
+    alert('hoho');
+  });
+
+  var toolbar = quill.getModule('toolbar');
+  toolbar.addHandler('image', function() {
+    alert('hoho lagi');
   });
 }
