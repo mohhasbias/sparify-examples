@@ -6,7 +6,6 @@ var TrackballControls = require('three-trackballcontrols');
 module.exports = function() {
   require('./index.css');
 
-  console.log(THREE);
 
   var html = yo`
     <div class="wrapper">
@@ -35,7 +34,7 @@ module.exports = function() {
         <img src="assets/i/header1.png" class="header1">
       </div>
       <div class="kotak2">
-        <div id="container"></div><div class="kecil">
+        <div id="kubusku"></div><div class="kecil">
 				  <img src="assets/i/kursor.png" class="ikon">
 				  <img src="assets/i/kubus.png" class="ikon">
 				  <img src="assets/i/teks.png" class="ikon">
@@ -54,7 +53,9 @@ module.exports = function() {
 
   function init() {
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.z = 500;
+    camera.position.x = 200;
+    camera.position.y = 200;
+    camera.position.z = 200;
 
     controls = new TrackballControls( camera );
     controls.rotateSpeed = 5.0;
@@ -67,27 +68,44 @@ module.exports = function() {
     scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
     var geometry = new THREE.CubeGeometry(100, 100, 100);
-    //var material =  new THREE.MeshPhongMaterial( { color:0xffffff, shading: THREE.FlatShading } );
-    var material = new THREE.MeshFaceMaterial([
+    var material = [
       new THREE.MeshBasicMaterial({
-      color: 0x00ff00
+        color: 0x00ff00,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
       }),
       new THREE.MeshBasicMaterial({
-      color: 0xff0000
+        color: 0xff0000,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
       }),
       new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
+        color: 0x0000ff,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
       }),
       new THREE.MeshBasicMaterial({
-      color: 0xffff00
+        color: 0xffff00,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
       }),
       new THREE.MeshBasicMaterial({
-      color: 0x00ffff
+        color: 0x00ffff,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
       }),
       new THREE.MeshBasicMaterial({
-      color: 0xff00ff
+        color: 0xff00ff,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
       })
-    ]);
+    ];
 
     var mesh = new THREE.Mesh( geometry, material);
     scene.add(mesh);
@@ -96,7 +114,7 @@ module.exports = function() {
     renderer.setClearColor( scene.fog.color );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize(800,400);
-    container = document.getElementById( 'container' );
+    container = document.getElementById( 'kubusku' );
     container.appendChild( renderer.domElement );
     //document.body.appendChild(renderer.domElement);
   }

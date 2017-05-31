@@ -1,5 +1,6 @@
 var yo = require('yo-yo');
 var diffhtml = require('diffhtml');
+var $ = require('jquery');
 
 module.exports = function() {
   require('bootstrap');
@@ -54,4 +55,6 @@ module.exports = function() {
     document.getElementById('app'),
     html
   );
+
+  $('.carousel').carousel();
 }
